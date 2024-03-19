@@ -10,18 +10,18 @@ import (
 
 func main() {
 	file := readFile("../../test.pr")
-	chars := splitIntoChars(file)
+	oneLiner := removeNewlines(file)
+	chars := formatString(oneLiner)
 	fmt.Println(chars)
-	
 }
 
+func removeNewlines(file string) string {
+	return strings.Replace(file, "\n", " ", -1)
+}
 
-
-
-
-func splitIntoChars(file string) []string {
-	lines := strings.Split(file, "")
-	return lines
+func formatString(file string) string {
+	chars := strings.Split(file, "")
+	return strings.Join(chars, " ")
 }
 
 func readFile(filename string) string {
