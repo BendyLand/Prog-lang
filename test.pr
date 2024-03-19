@@ -1,0 +1,14 @@
+print "This is a test of Prog";
+puts "this is another";
+2 + 2 = 4;
+if condition {
+
+}
+else {
+
+}
+
+for condition 
+{
+
+}
