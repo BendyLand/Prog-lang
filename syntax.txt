@@ -1,0 +1,75 @@
+Prog Syntax
+
+Basic: 
+
+  Comments:
+    //    : Single-line comment 
+    /* */ : Multi-line comment
+
+  Arithmetic:
+    +  : Add
+    -  : Subtract
+    *  : Multiply
+    /  : Divide
+    // : Integer divide
+    %  : Remainder divide
+    ** : Exponent
+
+  Strings:
+
+    ' '     : char
+    " "     : string
+    """ """ : multiline string
+      Unlike current interpreted languages, these will not be interchangeable. 
+      Flexibility will come from overloading string operations with char operations, if necessary (and possible).
+
+    print "The quick brown fox"; : for single line strings
+    puts "The quick brown fox";  : includes a newline
+
+    "The quick brown fox".size;     : for the length of the string in *bytes* 
+    "The quick brown キツネ".length; : for the length of the string in UTF-8 characters (experimental)
+
+  Literals:
+    0 - 9 : integer
+    3.14  : float
+    ' '   : char
+    " "   : string    
+    true  : bool
+    null  : null
+
+  Control Flow:
+    Conditionals:
+      You can couple the conditions and branches together:
+        if condition {
+          // do something 
+        } elif condition {
+          // do something else
+        } else {
+          // do a third thing
+        }
+
+      You can also put the subsequent branches on newlines:
+        if condition {
+          // do something
+        }
+        elif condition {
+          // do something else
+        }
+        else {
+          // do a third thing
+        }
+
+      Or put the opening brace on its own line:
+        if condition
+        {
+          // do something
+        }
+        elif condition
+        {
+          // do something else
+        }
+        else
+        {
+          // do a third thing
+        }
+
