@@ -37,6 +37,10 @@ Basic:
     true  : bool
     null  : null
 
+  Variables:
+    let example = "immutable variable";
+    let mut another = "mutable variable";
+
   Control Flow:
     Conditionals:
       You can couple the conditions and branches together:
