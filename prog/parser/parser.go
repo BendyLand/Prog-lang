@@ -10,13 +10,46 @@ import (
 
 func main() {
 	file := readFile("../../test.pr")
-	lines := splitIntoLines(file)
-	tokens := processLinesIntoTokens(lines)
-	fmt.Println(tokens)
-	keywords := extractKeywords(tokens)
-	matchedKeywords := matchKeywordsToTokens(keywords, tokens)
-	fmt.Println(matchedKeywords)
+	chars := splitIntoChars(file)
+	fmt.Println(chars)
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 func matchKeywordsToTokens(keywords []string, tokens [][]string) map[string][]string {
 	resultMap := make(map[string][]string, len(keywords))
@@ -25,7 +58,6 @@ func matchKeywordsToTokens(keywords []string, tokens [][]string) map[string][]st
 		temp := filterContainsKeyword(tokens, keyword)
 		filteredTokens = append(filteredTokens, temp)
 	}
-	fmt.Println(filteredTokens)
 	for i := 0; i < len(keywords); i++ {
 		resultMap[keywords[i]] = filteredTokens[i]
 	}
@@ -72,8 +104,8 @@ func splitIntoTokens(line string) []string {
 	return tokens
 }
 
-func splitIntoLines(file string) []string {
-	lines := strings.Split(file, "\n")
+func splitIntoChars(file string) []string {
+	lines := strings.Split(file, "")
 	return lines
 }
 
