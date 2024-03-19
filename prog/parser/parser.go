@@ -12,10 +12,39 @@ func main() {
 	file := readFile("../../test.pr")
 	lines := splitIntoLines(file)
 	tokens := processLinesIntoTokens(lines)
-	keywords := extractKeywords(tokens)
 	fmt.Println(tokens)
-	fmt.Println(keywords)
+	keywords := extractKeywords(tokens)
+	matchedKeywords := matchKeywordsToTokens(keywords, tokens)
+	fmt.Println(matchedKeywords)
 }
+
+func matchKeywordsToTokens(keywords []string, tokens [][]string) map[string][]string {
+	resultMap := make(map[string][]string, len(keywords))
+	var filteredTokens [][]string
+	for _, keyword := range keywords {
+		temp := filterContainsKeyword(tokens, keyword)
+		filteredTokens = append(filteredTokens, temp)
+	}
+	fmt.Println(filteredTokens)
+	for i := 0; i < len(keywords); i++ {
+		resultMap[keywords[i]] = filteredTokens[i]
+	}
+	return resultMap
+}
+
+func filterContainsKeyword(tokens [][]string, keyword string) []string {
+	var newSlice []string
+	for _, line := range tokens {
+		for _, word := range line {
+			if word == keyword {
+				newLine := strings.Join(line, " ")
+				newSlice = append(newSlice, newLine)
+			}
+		}
+	}
+	return newSlice
+}
+
 
 func extractKeywords(tokens [][]string) []string {
 	var foundKeywords []string
