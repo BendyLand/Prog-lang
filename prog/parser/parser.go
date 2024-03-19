@@ -2,35 +2,40 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"os"
+	"strings"
 	"parser/keywords"
+	// "parser/expressions"
 )
 
 func main() {
 	file := readFile("../../test.pr")
 	lines := splitIntoLines(file)
 	tokens := processLinesIntoTokens(lines)
+	keywords := extractKeywords(tokens)
 	fmt.Println(tokens)
+	fmt.Println(keywords)
+}
+
+func extractKeywords(tokens [][]string) []string {
+	var foundKeywords []string
+	for _, line := range tokens {
+		for _, token := range line {
+			if keywords.Keywords.Contains(token) {
+				foundKeywords = append(foundKeywords, token)
+			}
+		}
+	}
+	return foundKeywords
 }
 
 func processLinesIntoTokens(lines []string) [][]string {
-	var keywords [][]string
+	var allTokens [][]string
 	for _, line := range lines {
 		tokens := splitIntoTokens(line)
-		keywords = append(keywords, tokens)
+		allTokens = append(allTokens, tokens)
 	}
-	return keywords
-}
-
-func findKeywords(tokens []string) []string {
-	var result []string
-	for _, token := range tokens {
-		if keywords.Keywords.Contains(token) {
-			result = append(result, token)
-		}
-	}
-	return result
+	return allTokens
 }
 
 func splitIntoTokens(line string) []string {
@@ -51,4 +56,3 @@ func readFile(filename string) string {
 	}
 	return string(result)
 }
-
