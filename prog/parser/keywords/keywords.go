@@ -5,6 +5,11 @@ import (
 	"regexp"
 )
 
+var expressionPatterns = []string{
+	"\".*\"", // string
+	"'.?'", // char
+}
+
 var keywordPatterns = []string{
 	"print\\s+",
 	"puts\\s+",
@@ -17,6 +22,7 @@ var keywordPatterns = []string{
 	"return\\s+",
 }
 
+var ExpressionRegexPatterns = compilePatternsToRegexp(expressionPatterns)
 var KeywordRegexPatterns = compilePatternsToRegexp(keywordPatterns)
 
 func compilePatternsToRegexp(patterns []string) []*regexp.Regexp {

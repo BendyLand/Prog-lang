@@ -6,6 +6,7 @@ import (
 	"parser/keywords"
 	"slices"
 	"strings"
+	"regexp"
 )
 
 func main() {
@@ -14,10 +15,15 @@ func main() {
 	lines := splitIntoLines(file)
 	var matches [][]string
 	for _, line := range lines {
-		match := checkKeywordPatternsAgainstLine(line)
-		slices.Reverse(match)
-		if len(match) > 0 {
-			matches = append(matches, match)
+		keywordMatch := checkPatternsAgainstLine(keywords.KeywordRegexPatterns, line)
+		expressionMatch := checkPatternsAgainstLine(keywords.ExpressionRegexPatterns, line)
+		slices.Reverse(keywordMatch)
+		slices.Reverse(expressionMatch)
+		if len(keywordMatch) > 0 {
+			matches = append(matches, keywordMatch)
+		}
+		if len(expressionMatch) > 0 {
+			matches = append(matches, expressionMatch)
 		}
 	}
 	for _, match := range matches {
@@ -27,9 +33,9 @@ func main() {
 	}
 }
 
-func checkKeywordPatternsAgainstLine(line string) []string {
+func checkPatternsAgainstLine(patterns []*regexp.Regexp, line string) []string {
 	var matches []string
-	for _, pattern := range keywords.KeywordRegexPatterns {
+	for _, pattern := range patterns {
 		match := pattern.Find([]byte(line))
 		if match != nil {
 			matches = append(matches, string(match))
