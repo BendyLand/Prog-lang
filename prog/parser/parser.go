@@ -5,8 +5,6 @@ import (
 	"os"
 	"parser/keywords"
 	"strings"
-	// "parser/keywords"
-	// "parser/expressions"
 )
 
 func main() {
