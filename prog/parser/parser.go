@@ -14,9 +14,7 @@ func main() {
 	withSpaces := formatString(oneLiner)
 	tokens := constructTokens(withSpaces)
 	test := formatTokens(tokens)
-	for _, line := range test {
-		fmt.Println(line)
-	}
+	fmt.Println(test)
 }
 
 func isEmpty(input string) bool {
@@ -28,24 +26,17 @@ func isEmpty(input string) bool {
 	return true
 }
 
-//! this function wrongly removes actual input as well !!!
 func formatTokens(tokens []string) []string {
-	var newTokens, foundKeywords []string
+	var newTokens []string
 	placeholder := ""
 	for _, token := range tokens {
 		if keywords.CheckAgainstKeywords(token) {
-			if len(foundKeywords) > 0 {
-				temp := make([]string, 0)
-				foundKeywords = temp
-				newTokens = append(newTokens, placeholder)
-				placeholder = ""
-			}
-			foundKeywords = append(foundKeywords, token)
+			newTokens = append(newTokens, placeholder)
+			placeholder = ""
 		}
-		if len(foundKeywords) > 0 && !isEmpty(token) {
-			placeholder += token + " "
-		}
+		placeholder += token + " "
 	}
+	newTokens = append(newTokens, placeholder)
 	return newTokens
 }
 
