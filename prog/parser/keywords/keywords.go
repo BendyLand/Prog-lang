@@ -2,7 +2,7 @@ package keywords
 
 type StringList []string
 
-var Keywords = StringList{"if", "for", "elif", "else", "while", "let", "const", "print", "puts", "let", "mut"}
+var Keywords = StringList{"if", "for", "elif", "else", "while", "let", "const", "print", "puts", "let"}
 
 func CheckAgainstKeywords(word string) bool {
 	return Keywords.contains(word)

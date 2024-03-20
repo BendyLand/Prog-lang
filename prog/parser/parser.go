@@ -14,7 +14,9 @@ func main() {
 	withSpaces := formatString(oneLiner)
 	tokens := constructTokens(withSpaces)
 	test := formatTokens(tokens)
-	fmt.Println(test)
+	for _, line := range test {
+		fmt.Println(line)
+	}
 }
 
 func isEmpty(input string) bool {
@@ -50,8 +52,8 @@ func formatTokens(tokens []string) []string {
 func constructTokens(str string) []string {
 	var tokens []string
 	placeholder := ""
-	for i, c := range str {
-		if c == ' ' && str[i-1] == ' ' {
+	for _, c := range str {
+		if c == ' ' {
 			tokens = append(tokens, placeholder)
 			placeholder = ""
 		}
@@ -67,8 +69,14 @@ func removeNewlines(file string) string {
 }
 
 func formatString(file string) string {
-	chars := strings.Split(file, "")
-	return strings.Join(chars, " ")
+	var chars string
+	for i, c := range file {
+		if c == ' ' && file[i-1] == ' ' {
+			continue
+		}
+		chars += string(c)
+	}
+	return string(chars)
 }
 
 func removeComments(file string) string {
