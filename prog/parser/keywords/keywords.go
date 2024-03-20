@@ -1,22 +1,34 @@
 package keywords
 
-type StringList []string
+import (
+	"fmt"
+	"regexp"
+)
 
-var Keywords = StringList{"if", "for", "elif", "else", "while", "let", "const", "print", "puts", "let"}
-
-func CheckAgainstKeywords(word string) bool {
-	return Keywords.contains(word)
+var keywordPatterns = []string{
+	"print\\s+",
+	"puts\\s+",
+	"let\\s+",
+	"let\\s+mut\\s+=\\s*|\\n",
+	"if\\s+",
+	"elif\\s+",
+	"else\\s+",
+	"for\\s+",
+	"return\\s+",
 }
 
-func IsComment(token string) bool {
-	return token == "//"
-}
+var KeywordRegexPatterns = compilePatternsToRegexp(keywordPatterns)
 
-func (l StringList) contains(word string) bool {
-	for _, item := range l {
-		if item == word {
-			return true
+func compilePatternsToRegexp(patterns []string) []*regexp.Regexp {
+	var result []*regexp.Regexp
+	for _, pattern := range patterns {
+		temp, err := regexp.Compile(pattern)
+		if err != nil {
+			fmt.Println(pattern)
+			fmt.Println("Error compiling regex:", err)
+			continue
 		}
+		result = append(result, temp)
 	}
-	return false
+	return result
 }

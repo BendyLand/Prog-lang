@@ -4,70 +4,55 @@ import (
 	"fmt"
 	"os"
 	"parser/keywords"
+	"slices"
 	"strings"
 )
 
 func main() {
 	file := readFile("../../test.pr")
 	file = removeComments(file)
-	oneLiner := removeNewlines(file)
-	withSpaces := formatString(oneLiner)
-	tokens := constructTokens(withSpaces)
-	test := formatTokens(tokens)
-	fmt.Println(test)
-}
-
-func isEmpty(input string) bool {
-	for _, c := range input {
-		if c != ' ' && c != '\t' {
-			return false
+	lines := splitIntoLines(file)
+	var matches [][]string
+	for _, line := range lines {
+		match := checkKeywordPatternsAgainstLine(line)
+		slices.Reverse(match)
+		if len(match) > 0 {
+			matches = append(matches, match)
 		}
 	}
-	return true
-}
-
-func formatTokens(tokens []string) []string {
-	var newTokens []string
-	placeholder := ""
-	for _, token := range tokens {
-		if keywords.CheckAgainstKeywords(token) {
-			newTokens = append(newTokens, placeholder)
-			placeholder = ""
-		}
-		placeholder += token + " "
-	}
-	newTokens = append(newTokens, placeholder)
-	return newTokens
-}
-
-func constructTokens(str string) []string {
-	var tokens []string
-	placeholder := ""
-	for _, c := range str {
-		if c == ' ' {
-			tokens = append(tokens, placeholder)
-			placeholder = ""
-		}
-		if c != ' ' {
-			placeholder += string(c)
+	for _, match := range matches {
+		for _, token := range match {
+			fmt.Println(token)
 		}
 	}
-	return tokens
 }
 
-func removeNewlines(file string) string {
-	return strings.Replace(file, "\n", " ", -1)
+func checkKeywordPatternsAgainstLine(line string) []string {
+	var matches []string
+	for _, pattern := range keywords.KeywordRegexPatterns {
+		match := pattern.Find([]byte(line))
+		if match != nil {
+			matches = append(matches, string(match))
+		}
+	}
+	return matches
 }
 
 func formatString(file string) string {
-	var chars string
-	for i, c := range file {
-		if c == ' ' && file[i-1] == ' ' {
-			continue
+	chars := strings.Split(file, "")
+	var temp []string
+	for _, c := range chars {
+		if c != "\n" {
+			temp = append(temp, c)
 		}
-		chars += string(c)
 	}
-	return string(chars)
+	result := strings.Join(temp, " ")
+	return result
+}
+
+func splitIntoLines(file string) []string {
+	lines := strings.Split(file, "\n")
+	return lines
 }
 
 func removeComments(file string) string {

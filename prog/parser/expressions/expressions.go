@@ -12,8 +12,6 @@ const (
 	Math  Expression = iota
 )
 
-
-
 func createRegex(pattern string) regexp.Regexp {
 	r, err := regexp.Compile(pattern)
 	if err != nil {
