@@ -1,14 +1,14 @@
 print "This is a test of Prog";
 puts "this is another";
-2 + 2 = 4;
-if condition {
-
+let x = 2 + 2;
+if x > 10 {
+    // do something
 }
 else {
-
+    print "I'm in the other branch";
 }
 
-for condition 
+for i in 0..=10 
 {
-
+    // do something 11 times
 }
