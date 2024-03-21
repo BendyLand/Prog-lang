@@ -10,7 +10,9 @@ import (
 func main() {
 	file := readFile("../../test.pr")
 	test := parse(file)
-	fmt.Println(test)
+	for _, line := range test {
+		fmt.Println(line)
+	}
 }
 
 // this is the main parser, which will possess context aware characteristics
