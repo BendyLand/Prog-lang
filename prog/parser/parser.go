@@ -3,11 +3,29 @@ package main
 import (
 	"fmt"
 	"os"
+	"parser/state"
+	"strings"
 )
 
 func main() {
 	file := readFile("../../test.pr")
-	fmt.Println(file)
+	test := parse(file)
+	fmt.Println(test)
+}
+
+// this is the main parser, which will possess context aware characteristics
+func parse(file string) [][]string {
+	var result [][]string
+	lines := strings.Split(file, "\n")
+	parser := state.LineParser{
+		Index: 0,
+		State: "Parser",
+	}
+	for _, line := range lines {
+		tokens := parser.Parse(line)
+		result = append(result, tokens)
+	}
+	return result
 }
 
 func readFile(filename string) string {
