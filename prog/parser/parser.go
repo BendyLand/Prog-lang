@@ -24,7 +24,7 @@ func parse(file string) [][]string {
 		State: "Parser",
 	}
 	for _, line := range lines {
-		tokens := parser.Parse(line)
+		tokens := parser.Parse(line) // context state is updated here
 		result = append(result, tokens)
 	}
 	return result

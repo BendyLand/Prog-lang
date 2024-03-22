@@ -33,11 +33,11 @@ func (lp *LineParser) Parse(line string) []string {
 			next = '\n'
 		}
 		lp.UpdateState(i, current, next)
-
 		switch lp.State {
 		// PreParser became necessary as comments were not being properly handled with newlines alone.
 		// The old version would include the last char of the comment as its own real token, which is wrong.
-		// "PreParser" is a form of padding
+		// "PreParser" is a form of padding, however its use requires an end token on each line, i.e. semicolons.
+		// Otherwise it will cut off the first char of the next valid line.
 		case "PreParser":
 			lp.State = "Parser"
 		case "Parser":
@@ -47,7 +47,7 @@ func (lp *LineParser) Parse(line string) []string {
 					token = ""
 				}
 			} else {
-				token += string(line[i])
+				token += string(current)
 			}
 		case "StringLiteral":
 			token += string(current)
