@@ -11,6 +11,10 @@ import (
 func main() {
 	file := readFile("../../test.pr")
 	linesInTokens := parse(file)
+	parseTokens(linesInTokens)
+}
+
+func parseTokens(linesInTokens [][]string) {
 	for _, line := range linesInTokens {
 		for _, token := range line {
 			switch token {
@@ -28,9 +32,18 @@ func main() {
 				} else {
 					fmt.Println("Error here:", err)
 				}
+			case "let":
+				tokens := keywords.Tokens(line)
+				parsedLine, err := keywords.ParseVariableToken(tokens)
+				if err == nil {
+					fmt.Println(parsedLine)
+				} else {
+					fmt.Println("Error here:", err)
+				}
 			}
 		}
 	}
+
 }
 
 // this is the main parser, which will possess context aware characteristics
