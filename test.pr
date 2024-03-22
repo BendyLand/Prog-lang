@@ -1,10 +1,12 @@
 print "This is a test of Prog";
 puts "this is another";
-let x = 2 + 2;
+let x = 2 + 2; // here's a weird one 
+
 if x > 10 {
     // do something
 }
 else {
+    // this is the middle part
     print "I'm in the other branch";
 }
 
@@ -12,3 +14,5 @@ for i in 0..=10
 {
     // do something 11 times
 }
+
+print "checking comment after string. It's okay to see this part"; // it's bad if you see this part
