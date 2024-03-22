@@ -25,24 +25,42 @@ func parseStringLiteral(line string) string {
 func (lp *LineParser) Parse(line string) []string {
 	var tokens []string
 	token := ""
-	Loop: for i := range len(line) - 1 {
-		lp.UpdateState(i, rune(line[i]), rune(line[i+1]))
-		fmt.Println(lp.State, token)
+	for i, current := range line {
+		var next rune
+		if i+1 < len(line) {
+			next = rune(line[i+1])
+		} else {
+			next = '\n'
+		}
+		lp.UpdateState(i, current, next)
+
 		switch lp.State {
+		// PreParser became necessary as comments were not being properly handled with newlines alone.
+		// The old version would include the last char of the comment as its own real token, which is wrong.
+		// "PreParser" is a form of padding
+		case "PreParser":
+			lp.State = "Parser"
 		case "Parser":
-			if line[i] == ' ' {
-				tokens = append(tokens, token)
-				token = ""
+			if current == ' ' {
+				if token != "" {
+					tokens = append(tokens, token)
+					token = ""
+				}
 			} else {
 				token += string(line[i])
 			}
 		case "StringLiteral":
-			token += string(line[i])
+			token += string(current)
 		case "StringLiteralTerminator":
-			tokens = append(tokens, token)
+			tokens = append(tokens, token+string(current))
+			token = ""
+			lp.State = "PreParser"
 		case "Comment":
-			continue Loop
+			continue
 		}
+	}
+	if token != "" {
+		tokens = append(tokens, token)
 	}
 	return tokens
 }
@@ -51,17 +69,27 @@ func (lp *LineParser) UpdateState(index int, current, next rune) {
 	lp.Index = index
 	lp.CurrentChar = current
 	lp.NextChar = next
+
+	// Check high priority cases first.
 	switch {
 	case lp.CurrentChar == '"' && lp.State != "StringLiteral":
 		lp.State = "StringLiteral"
+		return // Exit early to prevent state override.
 	case lp.CurrentChar == '"' && lp.State == "StringLiteral":
 		lp.State = "StringLiteralTerminator"
-	case lp.State == "StringLiteralTerminator":
-		lp.State = "Parser"
-	case lp.CurrentChar == '/' && lp.NextChar == '/':
+		return
+	case lp.CurrentChar == '/' && lp.NextChar == '/' && lp.State != "StringLiteral":
 		lp.State = "Comment"
-	case lp.State == "Comment" && lp.NextChar == '\n':
-		lp.State = "Parser"
+		return
 	}
 
+	// Then handle state-specific transitions.
+	switch lp.State {
+	case "StringLiteralTerminator":
+		lp.State = "Parser"
+	case "Comment":
+		if lp.NextChar == '\n' {
+			lp.State = "PreParser"
+		}
+	}
 }
