@@ -43,7 +43,6 @@ func parseTokens(linesInTokens [][]string) {
 			}
 		}
 	}
-
 }
 
 // this is the main parser, which will possess context aware characteristics
