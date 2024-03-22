@@ -3,15 +3,33 @@ package main
 import (
 	"fmt"
 	"os"
+	"parser/keywords"
 	"parser/state"
 	"strings"
 )
 
 func main() {
 	file := readFile("../../test.pr")
-	test := parse(file)
-	for _, line := range test {
-		fmt.Println(line)
+	linesInTokens := parse(file)
+	for _, line := range linesInTokens {
+		for _, token := range line {
+			switch token {
+			case "print":
+				parsedLine, err := keywords.ParsePrintFn(line)
+				if err == nil {
+					fmt.Print(parsedLine) // no newline!
+				} else {
+					fmt.Println("Error here:", err)
+				}
+			case "puts":
+				parsedLine, err := keywords.ParsePutsFn(line)
+				if err == nil {
+					fmt.Println(parsedLine) // yes newline!
+				} else {
+					fmt.Println("Error here:", err)
+				}
+			}
+		}
 	}
 }
 
