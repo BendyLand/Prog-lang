@@ -6,9 +6,9 @@
 
 char* getFileContents();
 void splitIntoLines(char**, char*);
+void tokenizeLine(char** dest, char* line);
 
 int main(void) {
-
     char* data = getFileContents();
     char** buffer = (char**)malloc(sizeof(char*) * (MAX_LINES + 1));
     memset(buffer, 0, sizeof(char*) * (MAX_LINES + 1));
@@ -19,16 +19,52 @@ int main(void) {
     while (buffer[i] != NULL) {
         printf("%s \n", buffer[i]);
         i++;
-    } 
-
-    for (int j = 0; j < i; j++) {
-        free(buffer[j]);
+    }
+    char** test = (char**)malloc(sizeof(char*) * sizeof(buffer) + 1);
+    tokenizeLine(test, buffer[0]);
+    i = 0;
+    while (test[i] != NULL) {
+        printf("%s\n", test[i]);
+        free(test[i]);
+        i++;
+    }
+    i = 0;
+    while (buffer[i] != NULL) {
+        free(buffer[i]); 
+        i++;
     }
 
     free(data);
 
-
     return 0;
+}
+
+void tokenizeLine(char** dest, char* line) {
+    int length = strlen(line);
+    int j = 0;
+    int n = 0;
+    char buffer[100] = {0};
+    char c;
+
+    for (int i = 0; i < length; i++) {
+        c = line[i];
+        if (c == ' ') {
+            dest[n] = (char*)malloc(sizeof(char) * 100 + 1);
+            if (dest[n] == NULL) {
+                perror("Unable to allocate memory for token");
+                continue;
+            }
+            buffer[j] = '\0';
+            strcpy(dest[n], buffer);
+            memset(buffer, 0, 100);
+            j = 0;
+            n++;
+        }
+        else {
+            buffer[j] = c;
+            j++;
+        }
+    }
 }
 
 void splitIntoLines(char** buffer, char* file) {
@@ -57,6 +93,7 @@ void splitIntoLines(char** buffer, char* file) {
             j++;
         }
     }
+    buffer[line] = NULL;
 }
 
 char* getFileContents() {
