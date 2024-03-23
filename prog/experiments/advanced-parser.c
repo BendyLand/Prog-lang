@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include "keywords.h"
 
 #define MAX_LINES 100
 
@@ -19,7 +21,7 @@ typedef struct {
 
 char* getFileContents();
 void splitIntoLines(char**, char*);
-void tokenizeLine(char** dest, char* line);
+void filterSignificantTokens(char** buffer);
 
 int main(void) {
     char* data = getFileContents();
@@ -27,18 +29,10 @@ int main(void) {
     memset(buffer, 0, sizeof(char*) * (MAX_LINES + 1));
 
     splitIntoLines(buffer, data);
-    char** test = (char**)malloc(sizeof(char*) * sizeof(buffer) + 1);
-    tokenizeLine(test, buffer[0]);
+    filterSignificantTokens(buffer);
     int i = 0;
-    while (test[i] != NULL) {
-        printf("%s\n", test[i]);
-        free(test[i]);
-        i++;
-    }
-    free(test);
-
-    i = 0;
     while (buffer[i] != NULL) {
+        printf("%s\n", buffer[i]);
         free(buffer[i]); 
         i++;
     }
@@ -48,31 +42,37 @@ int main(void) {
     return 0;
 }
 
-void tokenizeLine(char** dest, char* line) {
-    int length = strlen(line);
-    int j = 0;
-    int n = 0;
-    char buffer[100] = {0};
-    char c;
-
-    for (int i = 0; i < length; i++) {
-        c = line[i];
-        if (c == ' ') {
-            dest[n] = (char*)malloc(sizeof(char) * 100 + 1);
-            if (dest[n] == NULL) {
-                perror("Unable to allocate memory for token");
-                continue;
-            }
-            buffer[j] = '\0';
-            strcpy(dest[n], buffer);
-            memset(buffer, 0, 100);
-            j = 0;
-            n++;
+void filterSignificantTokens(char** buffer) {
+    char** result = (char**)malloc(sizeof(buffer) / sizeof(char*) + 1);
+    if (result == NULL) {
+        perror("Unable to allocate for result.");
+        return;
+    }
+    int i = 0;
+    while (buffer[i] != NULL) {
+        char* line = (char*)malloc(strlen(buffer[i]) / sizeof(char) + 1);
+        if (line == NULL) {
+            perror("Unable to allocate memory for line.\n");
+            return;
         }
-        else {
-            buffer[j] = c;
-            j++;
+        strcpy(line, buffer[i]);
+        char* tokens  = strtok(line, " ");
+        if (isKeyword(&tokens[0])) {
+            strcpy(result[i], line); // problem
+            printf("I'm here\n");
         }
+    }
+    memset(buffer, 0, 0);
+    i = 0;
+    while (result[i] != NULL) {
+        int length = strlen(result[i]);
+        buffer[i] = (char*)malloc(strlen(result[i]) / sizeof(char));
+        if (buffer[i] == NULL) {
+            perror("Memory allocation to buffer failed.\n");
+            continue;
+        }
+        strcpy(buffer[i], result[i]);
+        i++;
     }
 }
 
