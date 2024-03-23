@@ -1,7 +1,7 @@
-print "This is a test of Prog";
+print "This is a test of Prog" ;
+puts ;
 puts "this is another"; 
 let x = 2 + 2; // here's a weird one 
-
 if x > 10 {
     let y = 5 + 3;
     puts "Here is y: #{y}" // and a bonus comment for fun;
@@ -9,19 +9,18 @@ if x > 10 {
 else {
     // this is the middle part
     print "I'm in the other branch";
+    puts ;
     if x < 5 {
         puts "x is less than five";
     } else {
         puts "x is more than five";
     }
 }
-
 for i in 0..=10 
 {
     // do something 11 times
     puts "#{i}";
-
 }
-
-
 print "checking comment after string. It's okay to see this part" // it's bad if you see this part
+puts ;
+let testStr = "This is a test of saving a string to a variable";
