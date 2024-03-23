@@ -4,6 +4,19 @@
 
 #define MAX_LINES 100
 
+/**  
+ * States:
+ * 0 = Parser
+ * 1 = String
+ * 2 = Comment
+ */
+typedef struct {
+    char currentChar;
+    char nextChar;
+    int index;
+    int state;
+} Parser;
+
 char* getFileContents();
 void splitIntoLines(char**, char*);
 void tokenizeLine(char** dest, char* line);
@@ -14,26 +27,22 @@ int main(void) {
     memset(buffer, 0, sizeof(char*) * (MAX_LINES + 1));
 
     splitIntoLines(buffer, data);
-
-    int i = 0;
-    while (buffer[i] != NULL) {
-        printf("%s \n", buffer[i]);
-        i++;
-    }
     char** test = (char**)malloc(sizeof(char*) * sizeof(buffer) + 1);
     tokenizeLine(test, buffer[0]);
-    i = 0;
+    int i = 0;
     while (test[i] != NULL) {
         printf("%s\n", test[i]);
         free(test[i]);
         i++;
     }
+    free(test);
+
     i = 0;
     while (buffer[i] != NULL) {
         free(buffer[i]); 
         i++;
     }
-
+    free(buffer);
     free(data);
 
     return 0;
@@ -99,8 +108,8 @@ void splitIntoLines(char** buffer, char* file) {
 char* getFileContents() {
     FILE* fptr;
     long length;
-    fptr = fopen("../../test.pr", "r");
 
+    fptr = fopen("../../test.pr", "r");
     if (fptr == NULL) {
         perror("Problem opening file.\n");
         return NULL;
@@ -125,7 +134,6 @@ char* getFileContents() {
     }
 
     buffer[length] = '\0';
-
     fclose(fptr);
 
     return buffer;
