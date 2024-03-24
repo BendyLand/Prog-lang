@@ -66,7 +66,7 @@ ___
 
 ## Annoying bits:
 
-**Semicolons** will probably be necessary. They're the toll for being free of parenthesis, whitespace-reliance, and strict formatting. One possible way around this is to only make them necessary if calling something like print without parenthesis, but optional otherwise. I will continue to brainstorm ways around this. 
+**Semicolons**... The more time I spend on this project, the less I think I will end up needing them! The bad news is that the solution looks like it will end up being kind of complex, and at first may come with some performance penalties. My thought is that I should be able to determine the end of each token by what the expected end token could/should be. However, this means that each expression will need a custom parsing strategy, likely adding some overhead.  
 
 **Reserved words** will obviously be necessary. I'll be including several, from various other languages serving as sources of inspiration. They will all be lowercase, and while they may be familiar from existing languages, they may not always behave the same. I make no claim for trying to limit the scope of these, though I will try to only include ones that I feel are beneficial in some way. The proposed benefit could be anything from readability, to the location of the keys on the keyboard necessary for typing the word.  
 
