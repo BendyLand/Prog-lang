@@ -11,31 +11,96 @@ void splitIntoLines(char**, char*);
 void removeComments(char**);
 void tokenizeString(char*, char*);
 int containsValidString(char*);
+void tokenizeLine(char** dest, char* line);
 
 int main(void) {
     char* data = getFileContents();
     char** buffer = (char**)malloc(sizeof(char*) * (MAX_LINES + 1));
     memset(buffer, 0, sizeof(char*) * (MAX_LINES + 1));
 
+
     splitIntoLines(buffer, data);
     removeComments(buffer);
     int i = 0;
     while (buffer[i] != NULL) {
         // printf("%s\n", buffer[i]);
-        int lineLength = strlen(buffer[i]);
-        char* newStr = (char*)malloc(lineLength + 1);
-        if (containsValidString(buffer[i])) {
-            tokenizeString(newStr, buffer[i]);
-            // printf("%s\n", newStr);
+        int length = strlen(buffer[i]);
+        char** lineTokens = (char**)malloc(length + 1);
+        for (int i = 0; i < length + 1; i++) {
+            lineTokens[i] = (char*)malloc(length + 1);
+            lineTokens[i] = NULL;
         }
-        free(buffer[i]); 
-        free(newStr);
+
+        tokenizeLine(lineTokens, buffer[i]);
+        int j = 0;
+        while (lineTokens[j] != NULL) {
+            // printf("%s\n", lineTokens[j]);
+            free(lineTokens[j]);
+            j++;
+        }
+        free(buffer[i]);
         i++;
     }
     free(buffer);
     free(data);
 
     return 0;
+}
+
+void tokenizeLine(char** dest, char* line) {
+    int length = strlen(line);
+    int numTokens = 0;
+    for (int i = 0; i < length; i++) 
+        if (line[i] == ' ') 
+            numTokens++;
+    char** tokens = (char**)malloc(sizeof(char*) * numTokens + 1);
+    char temp[length+1];
+    char text[length+1];
+
+    if (containsValidString(line)) {
+        tokenizeString(text, line);
+        int i = 0;
+        int j = 0;
+        int n = 0;
+        while (line[i] != '"') {
+            temp[i] = line[i];
+            i++;
+            n++;
+            if (line[i] == ' ') {
+                temp[n] = '\0';
+                tokens[j] = temp;
+                j++;
+                n = 0;
+            }
+        }
+        tokens[j] = text;
+    }
+    else {
+        int j = 0;
+        int n = 0; 
+        // Iterate through the line
+        for (int i = 0; i < length; i++) {
+            if (line[i] == ' ') {
+                temp[i] = '\0';
+                tokens[j] = temp;
+                j++;
+                n = 0;
+            }
+            else {
+                temp[n] = line[i];
+                n++;
+            }
+        }
+    }
+
+
+    for (int i = 0; i < numTokens + 1; i++) {
+        if (tokens[i] != NULL) {
+            dest[i] = (char*)malloc(strlen(tokens[i]) + 1);
+            strcpy(dest[i], tokens[i]);
+        }
+    }
+    free(tokens);
 }
 
 int containsValidString(char* line) {
@@ -72,9 +137,9 @@ void removeComments(char** buffer) {
         int length = strlen(buffer[i]);
         for (int j = 0; j < length-1; j++) {
             // If you encounter a comment...
-            if (buffer[i][j] == '/' && buffer[i][j+1] == '/') { 
+            if (buffer[i][j] == '/' && buffer[i][j+1] == '/') {
                 // Set the null byte to the start of the comment
-                buffer[i][j] = '\0'; 
+                buffer[i][j] = '\0';
                 break;
             }
             // Otherwise nothing happens
@@ -96,7 +161,7 @@ void splitIntoLines(char** buffer, char* file) {
         if (c == '\n' || i == length - 1) {
             // Set the null byte at the 'pointer' and copy the string into buffer
             temp[j] = '\0';
-            buffer[line] = (char*)malloc(strlen(temp) + 1); 
+            buffer[line] = (char*)malloc(strlen(temp) + 1);
             if (buffer[line] == NULL) {
                 perror("Error creating line buffer.\n");
                 continue;
