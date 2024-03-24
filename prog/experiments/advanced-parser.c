@@ -24,15 +24,16 @@ int main(void) {
         // printf("%s\n", buffer[i]);
         int lineLength = strlen(buffer[i]);
         char* newStr = (char*)malloc(lineLength + 1);
-        tokenizeString(newStr, buffer[i]);
-        printf("%s\n", newStr);
+        if (containsValidString(buffer[i])) {
+            tokenizeString(newStr, buffer[i]);
+            // printf("%s\n", newStr);
+        }
         free(buffer[i]); 
         free(newStr);
         i++;
     }
     free(buffer);
     free(data);
-
 
     return 0;
 }
@@ -51,19 +52,16 @@ int containsValidString(char* line) {
 // This function copies any valid string in a line to `dest` as one token.
 // It assumes `line` is an existing line, and `dest` is an already allocated buffer with equal or greater length
 void tokenizeString(char* dest, char* line) {
-    char* stringStart;
     int i = 0;
-    if (containsValidString(line)) {
-        stringStart = strchr(line, '"');
-        int length = strlen(stringStart);
-        char stringLiteral[length+1];
-        while (stringStart[i+1] != '"' || i > length) {
-            stringLiteral[i] = stringStart[i+1];
-            i++;
-        }
-        stringLiteral[i] = '\0';
-        strcpy(dest, stringLiteral);
+    char* stringStart = strchr(line, '"');
+    int length = strlen(stringStart);
+    char stringLiteral[length+1];
+    while (stringStart[i+1] != '"' || i > length) {
+        stringLiteral[i] = stringStart[i+1];
+        i++;
     }
+    stringLiteral[i] = '\0';
+    strcpy(dest, stringLiteral);
 }
 
 // This function assumes `buffer` is fully allocated and ends in NULL
