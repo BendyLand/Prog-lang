@@ -6,19 +6,6 @@
 
 #define MAX_LINES 100
 
-/**  
- * States:
- * 0 = Parser
- * 1 = String
- * 2 = Comment
- */
-typedef struct {
-    char currentChar;
-    char nextChar;
-    int index;
-    int state;
-} Parser;
-
 char* getFileContents();
 void splitIntoLines(char**, char*);
 void removeComments(char** buffer);
@@ -63,30 +50,33 @@ void removeComments(char** buffer) {
 
 void splitIntoLines(char** buffer, char* file) {
     int line = 0;
+    int length = strlen(file);
     int j = 0;
     char temp[100] = {0}; // lines must be under 100 characters long
     char c;
-
-    int length = strlen(file);
+    // For each char in the file...
     for (int i = 0; i < length; i++) {
         c = file[i];
+        // (End condition for each line) If you're on a newline or the final char...
         if (c == '\n' || i == length - 1) {
+            // Set the null byte at the 'pointer' and copy the string into buffer
             temp[j] = '\0';
-            buffer[line] = (char*)malloc(strlen(temp) + 1); // allocate for the line
+            buffer[line] = (char*)malloc(strlen(temp) + 1); 
             if (buffer[line] == NULL) {
                 perror("Error creating line buffer.\n");
                 continue;
             }
             strcpy(buffer[line], temp);
-            memset(temp, 0, sizeof(temp));
             j = 0;
             line++;
         }
-        else {
+        else { // If it's NOT a newline or the last char...
+            // Add the char to temp and increment the 'pointer'
             temp[j] = c;
             j++;
         }
     }
+    // Set the last element of `buffer` to NULL
     buffer[line] = NULL;
 }
 
@@ -100,10 +90,12 @@ char* getFileContents() {
         return NULL;
     }
 
+    // Move the pointer to the end, get its index, and resent the pointer to the start
     fseek(fptr, 0, SEEK_END);
     length = ftell(fptr);
     rewind(fptr);
 
+    // Create buffer and check for failed malloc
     char* buffer = (char*)malloc(sizeof(char) * length + 1);
     if (buffer == NULL) {
         perror("Problem creating buffer");
@@ -111,15 +103,19 @@ char* getFileContents() {
         return NULL;
     }
 
+    // Try to copy file contents to buffer
     if (fread(buffer, sizeof(char), length, fptr) != length) {
         perror("Failed to read file.");
         fclose(fptr);
+        // If file read fails, free buffer before returning
         free(buffer);
         return NULL;
     }
 
+    // Set the end of buffer to a null byte and close the file
     buffer[length] = '\0';
     fclose(fptr);
 
+    // If nothing fails, buffer must be freed by caller
     return buffer;
 }
