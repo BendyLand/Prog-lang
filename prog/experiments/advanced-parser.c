@@ -43,37 +43,43 @@ int main(void) {
 }
 
 void filterSignificantTokens(char** buffer) {
-    char** result = (char**)malloc(sizeof(buffer) / sizeof(char*) + 1);
-    if (result == NULL) {
-        perror("Unable to allocate for result.");
-        return;
+    int lines = 0;
+    while (buffer[lines] != NULL) {
+        lines++;
     }
-    int i = 0;
+
+    char** result = (char**)malloc((lines + 1) / sizeof(char*));
+    int i;
+    for (i = 0; i <= lines; i++) {
+        result[i] = NULL;
+    }
+
+    i = 0;
+    char* temp;
     while (buffer[i] != NULL) {
-        char* line = (char*)malloc(strlen(buffer[i]) / sizeof(char) + 1);
-        if (line == NULL) {
-            perror("Unable to allocate memory for line.\n");
+        temp = (char*)malloc(strlen(buffer[i]) + 1);
+        if (temp == NULL) {
+            perror("Unable to allocate memory for temp.\n");
             return;
         }
-        strcpy(line, buffer[i]);
-        char* tokens  = strtok(line, " ");
-        if (isKeyword(&tokens[0])) {
-            strcpy(result[i], line); // problem
-            printf("I'm here\n");
+        strcpy(temp, buffer[i]);
+
+        int length = strlen(temp);
+        char chars[length];
+        char prev;
+        for (int j = 0; j < length; j++) {
+            chars[j] = temp[j];
+            if (j > 0) {
+                prev = chars[j-1];
+                if (prev == '/' && chars[j] == '/') { 
+                    strcpy(buffer[i], ""); // set the comment line to an empty string
+                    continue;
+                }
+            }
         }
-    }
-    memset(buffer, 0, 0);
-    i = 0;
-    while (result[i] != NULL) {
-        int length = strlen(result[i]);
-        buffer[i] = (char*)malloc(strlen(result[i]) / sizeof(char));
-        if (buffer[i] == NULL) {
-            perror("Memory allocation to buffer failed.\n");
-            continue;
-        }
-        strcpy(buffer[i], result[i]);
         i++;
     }
+    free(temp);
 }
 
 void splitIntoLines(char** buffer, char* file) {
