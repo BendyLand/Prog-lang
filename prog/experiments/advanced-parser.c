@@ -21,7 +21,7 @@ typedef struct {
 
 char* getFileContents();
 void splitIntoLines(char**, char*);
-void filterSignificantTokens(char** buffer);
+void removeComments(char** buffer);
 
 int main(void) {
     char* data = getFileContents();
@@ -29,7 +29,7 @@ int main(void) {
     memset(buffer, 0, sizeof(char*) * (MAX_LINES + 1));
 
     splitIntoLines(buffer, data);
-    filterSignificantTokens(buffer);
+    removeComments(buffer);
     int i = 0;
     while (buffer[i] != NULL) {
         printf("%s\n", buffer[i]);
@@ -42,44 +42,23 @@ int main(void) {
     return 0;
 }
 
-void filterSignificantTokens(char** buffer) {
-    int lines = 0;
-    while (buffer[lines] != NULL) {
-        lines++;
-    }
-
-    char** result = (char**)malloc((lines + 1) / sizeof(char*));
-    int i;
-    for (i = 0; i <= lines; i++) {
-        result[i] = NULL;
-    }
-
-    i = 0;
-    char* temp;
+// This function assumes `buffer` is fully allocated and ends in NULL
+void removeComments(char** buffer) {
+    int i = 0;
+    // Until there are no more lines...
     while (buffer[i] != NULL) {
-        temp = (char*)malloc(strlen(buffer[i]) + 1);
-        if (temp == NULL) {
-            perror("Unable to allocate memory for temp.\n");
-            return;
-        }
-        strcpy(temp, buffer[i]);
-
-        int length = strlen(temp);
-        char chars[length];
-        char prev;
-        for (int j = 0; j < length; j++) {
-            chars[j] = temp[j];
-            if (j > 0) {
-                prev = chars[j-1];
-                if (prev == '/' && chars[j] == '/') { 
-                    strcpy(buffer[i], ""); // set the comment line to an empty string
-                    continue;
-                }
+        int length = strlen(buffer[i]);
+        for (int j = 0; j < length-1; j++) {
+            // If you encounter a comment...
+            if (buffer[i][j] == '/' && buffer[i][j+1] == '/') { 
+                // Set the null byte to the start of the comment
+                buffer[i][j] = '\0'; 
+                break;
             }
+            // Otherwise nothing happens
         }
         i++;
     }
-    free(temp);
 }
 
 void splitIntoLines(char** buffer, char* file) {
