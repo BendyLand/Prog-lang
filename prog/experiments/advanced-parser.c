@@ -8,7 +8,9 @@
 
 char* getFileContents();
 void splitIntoLines(char**, char*);
-void removeComments(char** buffer);
+void removeComments(char**);
+void tokenizeString(char*, char*);
+int containsValidString(char*);
 
 int main(void) {
     char* data = getFileContents();
@@ -20,13 +22,47 @@ int main(void) {
     int i = 0;
     while (buffer[i] != NULL) {
         printf("%s\n", buffer[i]);
+        int lineLength = strlen(buffer[i]);
+        char* newStr = (char*)malloc(lineLength + 1);
+        tokenizeString(newStr, buffer[i]);
         free(buffer[i]); 
+        printf("%s\n", newStr);
+        free(newStr);
         i++;
     }
     free(buffer);
     free(data);
 
+
     return 0;
+}
+
+int containsValidString(char* line) {
+    int length = strlen(line);
+    int quotes = 0;
+    for (int i = 0; i < length; i++) {
+        if (line[i] == '"') {
+            quotes++;
+        }
+    }
+    return quotes % 2 == 0 ? 1 : 0;
+}
+
+// This function copies any valid string in a line to `dest` as one token.
+// It assumes line is an existing line, and dest is an allocated buffer with equal or greater length
+void tokenizeString(char* dest, char* line) {
+    char* stringStart = strchr(line, '"');
+    int length = strlen(stringStart);
+    char stringLiteral[length+1];
+    int i = 1;
+    if (containsValidString(line)) {
+        while (stringStart[i] != '"' || i > length) {
+            stringLiteral[i] = stringStart[i];
+            i++;
+        }
+        stringLiteral[i] = '\0';
+    }
+    strcpy(dest, stringLiteral);
 }
 
 // This function assumes `buffer` is fully allocated and ends in NULL
