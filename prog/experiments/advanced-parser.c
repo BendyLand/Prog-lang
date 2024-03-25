@@ -12,6 +12,8 @@ void removeComments(char**);
 void tokenizeString(char*, char*);
 int containsValidString(char*);
 void tokenizeLine(char** dest, char* line);
+void tokenizeStringLine(char** dest, char* line);
+void tokenizeNonStringLine(char** dest, char* line);
 
 int main(void) {
     char* data = getFileContents();
@@ -26,10 +28,11 @@ int main(void) {
     while (lines[i] != NULL) {
         // puts(lines[i]);
         tokenizeLine(lineTokens, lines[i]);
-        puts(lineTokens[0]);
-        
-
-
+        int j = 0;
+        while (lineTokens[j] != NULL) {
+            puts(lineTokens[j]);
+            j++;
+        }
         free(lines[i]);
         i++;
     }
@@ -39,13 +42,34 @@ int main(void) {
     return 0;
 }
 
+void tokenizeNonStringLine(char** dest, char* line) {
+    int length = strlen(line);
+    char* temp = (char*)malloc(length);
+    int i = 0;
+    int j = 0;
+    int n = 0;
+    while (line[i] != '\0') {
+        if (line[i] == ' ') {
+            dest[n] = strdup(temp);
+            j = 0;
+            memset(temp, 0, length);
+            n++;
+        }
+        temp[j] = line[i];
+        i++;
+        j++;
+    }
+    dest[n] = strdup(temp);
+    dest[n+1] = NULL;
+    free(temp);
+}
+
 void tokenizeStringLine(char** dest, char* line) {
     int length = strlen(line);
     char* string = (char*)malloc(length);
     tokenizeString(string, line);
 
     char* temp = (char*)malloc(length);
-    char* tempStart = temp;
     int i = 0;
     int j = 0;
     int n = 0;
@@ -62,11 +86,16 @@ void tokenizeStringLine(char** dest, char* line) {
     }
     dest[n] = strdup(string);
     dest[n+1] = NULL;
+    free(string);
+    free(temp);
 }
 
 void tokenizeLine(char** dest, char* line) {
     if (containsValidString(line)) {
         tokenizeStringLine(dest, line);
+    }
+    else {
+        tokenizeNonStringLine(dest, line);
     }
 }
 
