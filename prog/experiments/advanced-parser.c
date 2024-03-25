@@ -26,6 +26,7 @@ int main(void) {
     while (lines[i] != NULL) {
         // puts(lines[i]);
         tokenizeLine(lineTokens, lines[i]);
+        puts(lineTokens[1]);
         
 
 
@@ -60,8 +61,7 @@ void tokenizeLine(char** dest, char* line) {
             i++;
             j++;
         }
-        n++;
-        dest[n] = strdup(temp);
+        dest[n] = strdup(string);
         dest[n+1] = NULL;
     }
 }
