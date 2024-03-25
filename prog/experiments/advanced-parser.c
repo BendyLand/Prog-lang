@@ -19,14 +19,14 @@ int main(void) {
     memset(buffer, 0, sizeof(char*) * (MAX_LINES + 1));
 
     int numLines = splitIntoLines(buffer, data);
-    char** lineTokens = (char**)malloc(numLines + 1);
+    char** lineTokens = (char**)malloc(sizeof(char*) * MAX_LINES + 1);
     removeComments(buffer);
 
     int i = 0;
     while (buffer[i] != NULL) {
         // printf("%s\n", buffer[i]);
         tokenizeLine(lineTokens, buffer[i]);
-        printf("first token: %s\n", lineTokens[0]); // this has some pretty weird results right now...
+        // printf("first token: %s\n", lineTokens[0]); // this has some pretty weird results right now...
 
 
         free(buffer[i]);
@@ -42,57 +42,29 @@ void tokenizeLine(char** dest, char* line) {
     int length = strlen(line);
     int numTokens = 0;
     for (int i = 0; i < length; i++) 
-        if (line[i] == ' ') 
+        if (line[i] == ' ' && i > 0 && line[i-1] != ' ') 
             numTokens++;
     char** tokens = (char**)malloc(sizeof(char*) * numTokens + 1);
-    char temp[length+1];
-    char text[length+1];
-
-    if (containsValidString(line)) {
-        tokenizeString(text, line);
-        int i = 0;
-        int j = 0;
-        int n = 0;
-        while (line[i] != '"') {
-            temp[i] = line[i];
-            i++;
-            n++;
-            if (line[i] == ' ') {
-                temp[n] = '\0';
-                tokens[j] = temp;
-                j++;
-                n = 0;
-            }
-        }
-        tokens[j] = text;
-    }
-    else {
-        int i = 0;
-        int j = 0;
-        int n = 0; 
-        // Iterate through the line
-        while (i < length) {
-            if (line[i] == ' ') {
-                temp[i] = '\0';
-                tokens[j] = temp;
-                j++;
-                n = 0;
-            }
-            else {
-                temp[n] = line[i];
-                n++;
-            }
-            i++;
+    char* tokenStart = line;
+    int tokenIndex = 0;
+    for (int i = 0; i <= length; i++) {
+        if (i == length || line[i] == ' ' && line[i-1] != ' ') {
+            int tokenLength = &line[i] - tokenStart;
+            tokens[tokenIndex] = (char*)malloc(tokenLength + 1);
+            strncpy(tokens[tokenIndex], tokenStart, tokenLength);
+            tokens[tokenIndex][tokenLength] = '\0';
+            tokenStart = &line[i+1];
         }
     }
 
-
-    for (int i = 0; i < numTokens + 1; i++) {
-        if (tokens[i] != NULL) {
-            dest[i] = (char*)malloc(strlen(tokens[i]) + 1);
-            strcpy(dest[i], tokens[i]);
-        }
+    for (int i = 0; i < numTokens; i ++) {
+        puts("Here");
+        printf("%d\n", i);
+        dest[i] = (char*)malloc(strlen(tokens[i]) + 1);
+        dest[i] = strdup(tokens[i]);
+        free(tokens[i]);
     }
+
     free(tokens);
 }
 
