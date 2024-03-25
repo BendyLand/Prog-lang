@@ -26,7 +26,7 @@ int main(void) {
     while (buffer[i] != NULL) {
         // printf("%s\n", buffer[i]);
         tokenizeLine(lineTokens, buffer[i]);
-        // printf("first token: %s\n", lineTokens[0]);
+        printf("first token: %s\n", lineTokens[0]); // this has some pretty weird results right now...
 
 
         free(buffer[i]);
