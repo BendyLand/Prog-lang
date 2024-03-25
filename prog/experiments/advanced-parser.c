@@ -61,7 +61,9 @@ void tokenizeNonStringLine(char** dest, char* line) {
         i++;
         j++;
     }
-    dest[n] = strdup(temp);
+    if (j > 0) {
+        dest[n] = strdup(temp);
+    }
     dest[n+1] = NULL;
     free(temp);
 }
