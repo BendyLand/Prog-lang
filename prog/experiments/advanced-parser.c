@@ -15,28 +15,55 @@ void tokenizeLine(char** dest, char* line);
 
 int main(void) {
     char* data = getFileContents();
-    char** buffer = (char**)malloc(sizeof(char*) * (MAX_LINES + 1));
-    memset(buffer, 0, sizeof(char*) * (MAX_LINES + 1));
+    char** lines = (char**)malloc(sizeof(char*) * (MAX_LINES + 1));
+    memset(lines, 0, sizeof(char*) * (MAX_LINES + 1));
 
-    int numLines = splitIntoLines(buffer, data);
+    int numLines = splitIntoLines(lines, data);
     char** lineTokens = (char**)malloc(sizeof(char*) * MAX_LINES + 1);
-    removeComments(buffer);
+    removeComments(lines);
 
     int i = 0;
-    while (buffer[i] != NULL) {
-        puts(buffer[i]);
+    while (lines[i] != NULL) {
+        // puts(lines[i]);
+        tokenizeLine(lineTokens, lines[i]);
+        
 
-        free(buffer[i]);
+
+        free(lines[i]);
         i++;
     }
-    free(buffer);
+    free(lines);
     free(data);
 
     return 0;
 }
 
 void tokenizeLine(char** dest, char* line) {
+    if (containsValidString(line)) {
+        int length = strlen(line);
+        char* string = (char*)malloc(length);
+        tokenizeString(string, line);
 
+        char* temp = (char*)malloc(length);
+        char* tempStart = temp;
+        int i = 0;
+        int j = 0;
+        int n = 0;
+        while (line[i] != '"') {
+            if (line[i] == ' ') {
+                dest[n] = strdup(temp);
+                j = 0;
+                memset(temp, 0, length);
+                n++;
+            }
+            temp[j] = line[i];
+            i++;
+            j++;
+        }
+        n++;
+        dest[n] = strdup(temp);
+        dest[n+1] = NULL;
+    }
 }
 
 int containsValidString(char* line) {
