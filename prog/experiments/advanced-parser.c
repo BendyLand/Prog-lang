@@ -7,7 +7,7 @@
 #define MAX_LINES 100
 
 char* getFileContents();
-void splitIntoLines(char**, char*);
+int splitIntoLines(char**, char*);
 void removeComments(char**);
 void tokenizeString(char*, char*);
 int containsValidString(char*);
@@ -18,26 +18,17 @@ int main(void) {
     char** buffer = (char**)malloc(sizeof(char*) * (MAX_LINES + 1));
     memset(buffer, 0, sizeof(char*) * (MAX_LINES + 1));
 
-
-    splitIntoLines(buffer, data);
+    int numLines = splitIntoLines(buffer, data);
+    char** lineTokens = (char**)malloc(numLines + 1);
     removeComments(buffer);
+
     int i = 0;
     while (buffer[i] != NULL) {
         // printf("%s\n", buffer[i]);
-        int length = strlen(buffer[i]);
-        char** lineTokens = (char**)malloc(length + 1);
-        for (int i = 0; i < length + 1; i++) {
-            lineTokens[i] = (char*)malloc(length + 1);
-            lineTokens[i] = NULL;
-        }
-
         tokenizeLine(lineTokens, buffer[i]);
-        int j = 0;
-        while (lineTokens[j] != NULL) {
-            // printf("%s\n", lineTokens[j]);
-            free(lineTokens[j]);
-            j++;
-        }
+        // printf("first token: %s\n", lineTokens[0]);
+
+
         free(buffer[i]);
         i++;
     }
@@ -76,10 +67,11 @@ void tokenizeLine(char** dest, char* line) {
         tokens[j] = text;
     }
     else {
+        int i = 0;
         int j = 0;
         int n = 0; 
         // Iterate through the line
-        for (int i = 0; i < length; i++) {
+        while (i < length) {
             if (line[i] == ' ') {
                 temp[i] = '\0';
                 tokens[j] = temp;
@@ -90,6 +82,7 @@ void tokenizeLine(char** dest, char* line) {
                 temp[n] = line[i];
                 n++;
             }
+            i++;
         }
     }
 
@@ -146,9 +139,10 @@ void removeComments(char** buffer) {
         }
         i++;
     }
+    buffer[i] = NULL;
 }
 
-void splitIntoLines(char** buffer, char* file) {
+int splitIntoLines(char** buffer, char* file) {
     int line = 0;
     int length = strlen(file);
     int j = 0;
@@ -178,6 +172,7 @@ void splitIntoLines(char** buffer, char* file) {
     }
     // Set the last element of `buffer` to NULL
     buffer[line] = NULL;
+    return line;
 }
 
 char* getFileContents() {
