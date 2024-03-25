@@ -31,12 +31,14 @@ int main(void) {
         int j = 0;
         while (lineTokens[j] != NULL) {
             puts(lineTokens[j]);
+            free(lineTokens[j]);
             j++;
         }
         free(lines[i]);
         i++;
     }
     free(lines);
+    free(lineTokens);
     free(data);
 
     return 0;
