@@ -24,10 +24,7 @@ int main(void) {
 
     int i = 0;
     while (buffer[i] != NULL) {
-        // printf("%s\n", buffer[i]);
-        tokenizeLine(lineTokens, buffer[i]);
-        // printf("first token: %s\n", lineTokens[0]); // this has some pretty weird results right now...
-
+        puts(buffer[i]);
 
         free(buffer[i]);
         i++;
@@ -39,33 +36,7 @@ int main(void) {
 }
 
 void tokenizeLine(char** dest, char* line) {
-    int length = strlen(line);
-    int numTokens = 0;
-    for (int i = 0; i < length; i++) 
-        if (line[i] == ' ' && i > 0 && line[i-1] != ' ') 
-            numTokens++;
-    char** tokens = (char**)malloc(sizeof(char*) * numTokens + 1);
-    char* tokenStart = line;
-    int tokenIndex = 0;
-    for (int i = 0; i <= length; i++) {
-        if (i == length || line[i] == ' ' && line[i-1] != ' ') {
-            int tokenLength = &line[i] - tokenStart;
-            tokens[tokenIndex] = (char*)malloc(tokenLength + 1);
-            strncpy(tokens[tokenIndex], tokenStart, tokenLength);
-            tokens[tokenIndex][tokenLength] = '\0';
-            tokenStart = &line[i+1];
-        }
-    }
 
-    for (int i = 0; i < numTokens; i ++) {
-        puts("Here");
-        printf("%d\n", i);
-        dest[i] = (char*)malloc(strlen(tokens[i]) + 1);
-        dest[i] = strdup(tokens[i]);
-        free(tokens[i]);
-    }
-
-    free(tokens);
 }
 
 int containsValidString(char* line) {
