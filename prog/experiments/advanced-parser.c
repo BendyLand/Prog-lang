@@ -26,7 +26,7 @@ int main(void) {
     while (lines[i] != NULL) {
         // puts(lines[i]);
         tokenizeLine(lineTokens, lines[i]);
-        puts(lineTokens[1]);
+        puts(lineTokens[0]);
         
 
 
@@ -39,30 +39,34 @@ int main(void) {
     return 0;
 }
 
+void tokenizeStringLine(char** dest, char* line) {
+    int length = strlen(line);
+    char* string = (char*)malloc(length);
+    tokenizeString(string, line);
+
+    char* temp = (char*)malloc(length);
+    char* tempStart = temp;
+    int i = 0;
+    int j = 0;
+    int n = 0;
+    while (line[i] != '"') {
+        if (line[i] == ' ') {
+            dest[n] = strdup(temp);
+            j = 0;
+            memset(temp, 0, length);
+            n++;
+        }
+        temp[j] = line[i];
+        i++;
+        j++;
+    }
+    dest[n] = strdup(string);
+    dest[n+1] = NULL;
+}
+
 void tokenizeLine(char** dest, char* line) {
     if (containsValidString(line)) {
-        int length = strlen(line);
-        char* string = (char*)malloc(length);
-        tokenizeString(string, line);
-
-        char* temp = (char*)malloc(length);
-        char* tempStart = temp;
-        int i = 0;
-        int j = 0;
-        int n = 0;
-        while (line[i] != '"') {
-            if (line[i] == ' ') {
-                dest[n] = strdup(temp);
-                j = 0;
-                memset(temp, 0, length);
-                n++;
-            }
-            temp[j] = line[i];
-            i++;
-            j++;
-        }
-        dest[n] = strdup(string);
-        dest[n+1] = NULL;
+        tokenizeStringLine(dest, line);
     }
 }
 
