@@ -32,6 +32,7 @@ int main(void) {
     free(lines);
     free(lineTokens);
     free(data);
+    // fscanf(stdin, "c");
 
     return 0;
 }

@@ -8,7 +8,7 @@ if x > 10 {
 else {
     // this is the middle part
     print "I'm in the other branch\n"
-    // (doesn't work yet) puts "This is a \"super\" difficult one"
+    puts "This is a \"super\" difficult one"
     if x < 5 {
         puts "x is less than five"
     } else {
